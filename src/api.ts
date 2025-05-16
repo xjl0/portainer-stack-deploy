@@ -17,7 +17,12 @@ type StackData = {
 type CreateStackParams = { type: number; method: string; endpointId: EndpointId }
 type CreateStackBody = { name: string; stackFileContent: string; swarmID?: string }
 type UpdateStackParams = { endpointId: EndpointId }
-type UpdateStackBody = { env: EnvVariables; stackFileContent: string }
+type UpdateStackBody = {
+  env: EnvVariables
+  stackFileContent: string
+  pullImage: boolean
+  prune: boolean
+}
 
 export class PortainerApi {
   private axiosInstance
@@ -37,8 +42,12 @@ export class PortainerApi {
   }
 
   async logout(): Promise<void> {
-    await this.axiosInstance.post('/auth/logout')
-    this.axiosInstance.defaults.headers.common['Authorization'] = ''
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
+      await this.axiosInstance.post('/auth/logout').catch(() => {})
+    } finally {
+      this.axiosInstance.defaults.headers.common['Authorization'] = ''
+    }
   }
 
   async getStacks(): Promise<StackData[]> {

@@ -88,7 +88,9 @@ export async function deployStack({
         },
         {
           env: existingStack.Env,
-          stackFileContent: stackDefinitionToDeploy
+          stackFileContent: stackDefinitionToDeploy,
+          pullImage: true,
+          prune: false
         }
       )
       core.info('Successfully updated existing stack')
